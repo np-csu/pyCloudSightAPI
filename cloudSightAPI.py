@@ -23,13 +23,22 @@ def makeRequest(imageUrl):
             'image_request[language]': LANGUAGE
             }
 
-    response = requests.post(reqUrlA, headers=headers, data=postData)
+    try:
+        response = requests.post(reqUrlA, headers=headers, data=postData)
+    except Exception, e:
+        print 'Error: connection error, please check your Internet and confirm the image url'
+        sys.exit()
+    
     token = response.json()['token']
 
     # you may get some response with status 'not completed' for about some times before getting the final result
     reqTimes = 10
     while reqTimes > 0:
-        response = requests.get(reqUrlB + token, headers=headers)
+        try:
+            response = requests.get(reqUrlB + token, headers=headers)
+        except Exception, e:
+            print 'Error: connection error, please check your Internet and confirm the image url'
+            sys.exit()
         status = response.json()['status']
         if status == 'completed':
             print 'RESULT: '
